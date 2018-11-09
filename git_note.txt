@@ -1,0 +1,281 @@
+#[前言]
+在实际开发中，我们应该按照几个基本原则进行分支管理：
+首先，master分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活；
+那在哪干活呢？干活都在dev分支上，也就是说，dev分支是不稳定的，到某个时候，比如1.0版本发布时，再把dev分支合并到master上，在master分支发布1.0版本；
+你和你的小伙伴们每个人都在dev分支上干活，每个人都有自己的分支，时不时地往dev分支上合并就可以了
+
+
+
+#如果没有远程仓库
+#初始化本地仓库
+git init
+
+#如果有远程仓库，基于远程仓库开发
+#基于ssh，需要在本地生成ssh秘钥+公钥，然后把公钥复制到github上
+#ssh-keygen
+git clone git@github.com:dailei2018/c-example.git
+
+#基于https
+git clone https://github.com/dailei2018/c-example.git
+
+#那么此时，c-example 文件夹就是 工作区，注意：工作区在当前版本库各个分支是共享的，所有在切换到不同分支之前最好先提交
+#当前分支的修改到当前分支的版本库，免得污染当前环境。
+#如果是临时切换到其他分支修改bug，又不想提交则可以利用 git stash 暂存当前环境。
+
+#在本地新增或者修改了文件后
+
+#保存在暂存区
+git add xxx.txt
+
+#新增文件，修改文件提交到暂存区，不包括被删除的文件。
+git add .
+
+#删除的文件，修改的文件(tracked files),提交到暂存区，但是不包括新增的文件(untracked files)
+git add -u
+
+#所有，即上面2个命令的集合
+git add --all
+git add -A
+
+
+
+#包暂存区提交到本地版本库
+git commit -m 'comment'
+
+#版本回退
+#HEAD表示当前版本，HEAD^ 上一个版本，HEAD^^ 上上个版本，HEAD~20 网上20个版本
+
+#回退到上一个版本
+git reset --hard HEAD^
+
+#通过版本号跳到特定版本,版本号不必写全，写前面几个就可以，只要不重叠
+git reset --hard commid
+
+#如果找不到最近的 commid，可以使用如下查看历史命令
+git reflog
+
+
+#让工作区的更改丢失，也就是还原到最近一次 git commit 或者 git add 时的状态
+#注意这个 --，因为 git checkout aaa 是切换分支的意思
+git checkout -- readme.txt
+
+#清除暂存区
+git reset HEAD <file>
+
+
+#当我们把文件删除了比如 rm -f tmp.txt
+#真的要删除
+git rm tmp.txt
+git commit -m 'remove tmp.txt'
+
+
+#误删除，从版本库里重新找回
+git checkout -- tmp.txt
+
+
+
+
+#####[分支管理]
+
+#创建分支
+git branch dev
+
+#切换分支
+git checkout dev
+
+#整合成一条指令, 创建并切换分支
+git checkout -b dev
+
+#查看分支,带 * 号代表当前在哪个分支上
+git branch
+
+#切换为主分支
+git checkout master
+
+#将 dev 分支合并到当前分支
+#如果显示的信息中有 Fast-forward 代表快进模式，速度非常快，只是指针的移动
+#如果中间出现冲突，必须手动修改
+git merge dev
+
+#也可以带上 --no-ff 参数，代表禁用 Fast-forward 模式，内部多了一次 commit，所以会有历史记录
+git merge --no-ff -m "merge with no-ff" dev
+
+#合并完成后，删除分支
+git branch -d dev
+
+
+###[bug 修复]
+#有些时候，需要暂时保存当前的工作环境，切换到其他分支改bug，然后再切换回来继续
+
+#存储当前的工作坏境
+git stash
+
+#此时查看状态，当前工作环境是干净的，然后就可以去其他分支去改
+#改完之后再回到这个分支
+git status
+
+#查看有哪些 stash，工作现场
+#stash@{0}: WIP on dev: f52c633 add merge
+git stash list
+
+#恢复到指定的 stash
+git stash apply stash@{0}
+#删除stash
+git stash drop stash@{0}
+
+#恢复最近的 stash，并删除 stash
+git stash pop
+
+
+
+#[远程协作]
+#以下显示，代表我们抓取和推送都已经绑定到了远程服务器
+git remote -v
+#origin  https://github.com/dailei2018/c-example.git (fetch)
+#origin  https://github.com/dailei2018/c-example.git (push)
+
+#把本地的master分支推送到远程 origin 分支
+git push origin master
+
+#把本地的 dev 分支推送到远程 origin 分支
+git push origin dev
+
+
+#抓取远程分支到本地，默认抓取的是 master 分支
+git clone https://github.com/dailei2018/c-example.git
+
+#抓取远程的 dev 分支到本地，并切换到 dev 分支
+git checkout -b dev origin/dev
+
+#改完之后
+git add xxx.txt
+git commit -m 'xxx'
+
+#将 dev 分支推送到 origin 的 dev 分支
+git push origin dev
+
+#如果已经有人先我们一步改了代码，并推送到了远程 dev 分支，那么就会报错
+#此时我们需要先把远程改动的分支代码拉到本地
+git pull
+
+#如果报了没指定关联错，说明我们没有指定远程跟本地的关联
+#直接指定
+git pull origin dev
+
+
+#也可以设置 origin/dev 分支跟本地的 dev 分支关联
+git branch --set-upstream-to=origin/dev dev
+
+#此时再次运行拉取操作，此时别人的代码跟我们的代码有冲突了，需要我们手动进文件修改
+git pull
+
+#修改完之后再走老步骤，先 add，再 commit，然后再推送到远程
+
+
+
+###[标签管理]
+#标签就是在某个 commit 上打上标记，更好记
+
+#首先切换到需要打标签的分支上
+#默认都是打在最新的 commit 上
+git tag v1.0
+
+#查看标签
+git tag
+
+#打到特定的 commit 上
+git tag v1.1 commit_id
+
+#查看标签信息
+git show v1.1
+
+#创建带说明的标签
+#-a 指定标签名
+git tag -a v1.2 -m 'xxx' commit_id 
+
+#删除标签
+git tag -d v1.1
+
+#推送标签到远程
+git push origin v1.1
+
+#推送全部
+git push origin --tags
+
+#删除远程的标签
+#先删除本地的标签
+git tag -d v1.1
+
+#同步到远程
+git push origin :refs/tags/v1.1
+
+
+####[多个远程 repositories]
+
+#和远程关联-名称取为 origin
+git remote add origin git@github.com:dailei2018/c-example.git
+
+#删除关联
+git remote rm origin
+
+#然后关联其他的 repository，比如码云
+git remote add origin git@gitee.com:liaoxuefeng/learngit.git
+
+#一般我们把远程的名字取为 origin，当然也可以定义为其他名字
+git remote add github git@github.com:dailei2018/c-example.git
+git remote add gitee git@gitee.com:liaoxuefeng/learngit.git
+
+#查看具体远程关联情况
+git remote -v
+
+#此时，我们就可以吧代码同时提交到github 和 码云
+git push github master
+git push gitee master
+
+
+
+
+
+#查看差异
+git diff xxx.txt
+
+#查看工作区和最新版本的区别
+git diff HEAD -- readme.txt
+
+#查看当前状态
+git status
+
+#查看日志
+git log
+
+#简化单行显示
+git log --pretty=oneline
+
+#模拟图标显示
+git log --graph --pretty=oneline --abbrev-commit
+
+#配置别名
+git config --global alias.st status
+
+
+###[git 配置文件]
+
+#当前 repository
+.git/config
+
+#全局的在当前用户家目录的
+.gitconfig
+
+#或略一些特殊文件配置卸载 .gitignore 文件里
+# Windows:
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Python:
+*.py[cod]
+*.so
+*.egg
+*.egg-info
+dist
+build

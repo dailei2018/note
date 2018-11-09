@@ -279,3 +279,8 @@ Desktop.ini
 *.egg-info
 dist
 build
+
+
+#关闭自动转化 lf 为 crlf
+[core]
+    autocrlf = false 

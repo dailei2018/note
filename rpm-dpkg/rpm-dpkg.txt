@@ -1,0 +1,50 @@
+#install package by local file(rpm or deb)
+rpm -ivh xxx.rpm
+dpkg -i xxx.deb
+
+#check a package has been installed or not
+rpm -qa | grep httpd
+dpkg -l | grep httpd
+dpkg-query -l | grep httpd
+
+#file belongs to which package
+rpm -qf /usr/bin/lua
+dpkg -S /usr/bin/python
+
+#package file list
+rpm -ql lua
+dpkg-query -L vim
+
+#package info
+rpm -qi xxx
+apt-cache show xxx
+
+#dependence
+rpm -qR xxx
+apt-cache depends xxx
+
+
+
+
+yum install xxxx
+apt-get install xxxx
+
+#update package
+yum update
+apt-get upgrade
+
+#update cache
+yum makecache
+apt-get update
+
+yum search xxx
+apt-cache search xxx
+
+yum remove
+apt-get remove
+
+yum provides
+apt-file search
+
+yum info
+apt-cache show

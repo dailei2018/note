@@ -1,0 +1,4 @@
+[c algorithm]
+https://www.geeksforgeeks.org
+
+[code ]

@@ -1,0 +1,41 @@
+gcc有很多扩展属性以及一些内置函数，可以参考官方文档
+
+-E          预处理后停止，打印到标准输出
+-c          只编译不链接
+-S          生成汇编代码后停止，不再进行汇编操作
+-o file     指定输出的文件
+
+-v          打印出版本信息，默认头文件搜索路径，动态库默认搜索路径
+
+-print-search-dirs      打印搜索路径
+-print-sysroot          打印根路径一般为 /
+
+-O0,-O1,-O2,-O3     优化
+-g                  调试
+
+-O0 -g3
+
+[预编译]
+-E
+    -dM         #define 形式打印出预处理器遇到的宏，包括预定义的宏。
+    -dD         大体同上，1.不打印预定义的宏 2.打印#define和预处理结果
+    -dN         大体同上，打印宏定义名而不扩展
+    -dI         不打印预处理结果
+    
+[链接选项]
+    -lxxx       到特定几个目录去搜索libxxx.a 或者 libxxx.so，也可以直接使用文件
+                比如xxx.o xxx.a xxx.so
+    -shared     链接成共享的对象可以被其他对象链接成可执行对象，不是所有的系统
+                都支持，所以一般跟 -fpic -fPIC(编译选项) 一起使用。
+
+[目录]
+    -iquote dir     双引号头文件搜索路径
+    -I dir          头文件搜索路径
+    -isystem dir    头文件搜索路径
+    -idirafter dir  头文件搜索路径
+    优先级从上到下，从左到右
+    
+    -Ldir           -l搜索路径
+    
+    --sysroot=dir   假设默认搜索路径为 /usr/include /usr/lib
+                    现在变为 dir/usr/include dir/usr/lib

@@ -51,3 +51,13 @@ https://en.wikibooks.org/wiki/X86_Disassembly/Calling_Conventions
     
     在调用函数时，这几个寄存器需要调用者自己保存 rbp, rbx, r12, r13, r14, r15
     整数在 rax or rdx:rax 返回，浮点数在 xmm0 or xmm1:xmm0
+
+#寄存器
+sp          栈指针
+
+
+#指令
+ret         弹出栈中的数据到IP，相当于 pop IP - 段内指令转移
+retf        弹出栈中的IP,CS(段)，相当于 pop IP,pop CS  - 段外指令转移
+
+call        将当前IP(或者CS+IP)压入栈中，跳转执行相应的指令

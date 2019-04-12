@@ -18,6 +18,8 @@ t = tem bytes (80 bit floating point)
 #寄存器需要带上 % ，常数需要带上 $
 movb $0xff %al
 
+#对内存的简洁引用带上()
+movb (%esi), %al        # %esi 指针指向的内存中一个字节存入 %al
 
 #地址操作语法
 movl    -8(%ebp, %edx, 4), %eax  # Full example: load *(ebp + (edx * 4) - 8) into eax
@@ -61,3 +63,22 @@ ret         弹出栈中的数据到IP，相当于 pop IP - 段内指令转移
 retf        弹出栈中的IP,CS(段)，相当于 pop IP,pop CS  - 段外指令转移
 
 call        将当前IP(或者CS+IP)压入栈中，跳转执行相应的指令
+
+
+
+
+
+
+gcc 内联汇编
+
+
+[约束]
+输出操作数约束应该带有一个约束修饰符 "="
+当使用 "r" 约束时，GCC 在这里可以自由分配任何寄存器
+
+a   %eax
+b   %ebx
+c   %ecx
+d   %edx
+S   %esi
+D   %edi

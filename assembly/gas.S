@@ -4,6 +4,15 @@
 
 movb  src  dst
 
+累加寄存器	    AX	EAX	RAX
+基址寄存器	    BX	EBX	RBX
+计数寄存器	    CX	ECX	RCX
+数据寄存器	    DX	EDX	RDX
+堆栈基指针	    BP	EBP	RBP
+变址寄存器	    SI	ESI	RSI
+堆栈顶指针	    SP	ESP	RSP
+指令寄存器	    IP	EIP	RIP
+
 #后缀
 #如果没有带后缀，gas会根据 dst 的大小来推断
 b = byte (8 bit)
@@ -37,6 +46,43 @@ cmpl %eax %ebx	            compare then set flags. If eax == ebx, zero flag is s
 jmp <location>	            unconditional jump
 je <location>	            jump to <location> if equal flag is set
 jg,jge,jl,jle,jne,...	    >,>=,<,<=,!=,...
+
+
+
+#函数调用框架---------------------------
+pushq   %rbp            #保存 rbp 到栈
+movq    %rsp, %rbp      #保存栈顶指针 rsp 到 rbp
+
+
+
+movq %rbp, %rsp         #恢复rsp
+popq %rbp               #恢复rbp
+ret
+
+#----------------------
+
+#-------------------------
+pushq   %rax
+==
+subq    $8, %rsp
+movq    %rax, (%rsp)
+#------------------------
+
+#------------------
+popq    %rax
+==
+movq    (%rsp), %eax
+addq    $8, %rsp
+#--------------------
+
+
+可用寄存器：
+32
+eax ebx ecx edx edi esi ebp esp r8d r9d r10d r11d r12d r13d r14d r15d
+
+64
+rax rbx rcx rdx rdi rsi rbp rsp r8 r9 r10 r11 r12 r13 r14 r15
+
 
 
 [函数调用约定]
